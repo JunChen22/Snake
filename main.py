@@ -4,38 +4,42 @@ from time import clock
 from time import sleep
 import pygame
 
+WIDTH = 800
+HEIGHT = 600
 
-y = randint(1,6)
-x = clock()
+class Snake():
 
-def update():
+    randomX = randint(1, WIDTH-1)
+    randomY = randint(1, HEIGHT-1)
+
+    def __init__(self, snakeX,snakeY):
+
+        pygame.init()
+        gameDisplay = pygame.display.set_mode((800, 600))
+
+    def update():
+        pygame.display.update()
+        pass
+
+    def food():
+        pass
+
+    def controlLogic():
+        pass
+
+    def kbinput():
+        pass
+
+    def display():
+        pass
+
+    def body():
+        pass
+
+    def quitgame():
+        pygame.quit()
+        quit()
+
+
+if __name__ == "__main__":
     pass
-
-def food():
-    pass
-
-
-def controlLogic():
-    pass
-
-def kbinput():
-    pass
-
-def boarder():
-    pass
-
-def body():
-    pass
-
-def main():
-    pass
-
-
-
-pygame.init()
-gameDisplay = pygame.display.set_mode((800,600))
-pygame.display.update()
-
-
-pygame.quit()
-quit()
