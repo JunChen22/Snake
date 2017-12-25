@@ -6,24 +6,25 @@
 
 from random import randint
 import pygame
+from msvcrt import kbhit
+
 
 WIDTH = 800
 HEIGHT = 600
+DIR = {273: 'UP', 274: 'DOWN', 275:'RIGHT', 276: 'LEFT'}
+
 
 class Snake():
 
-    randomX = randint(1, WIDTH-1)
-    randomY = randint(1, HEIGHT-1)
-    current_dire = None
     snakeX = 80
     snakeY = 140
+    current_dire = None
     snakeLength = 1
 
     def __init__(self):
 
         pygame.init()
         self.clock = pygame.time.Clock()
-        self.crashed = False
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         self.tittle = pygame.display.set_caption("Snakey")
         self.snakeHead = pygame.image.load("image/snake.png")
@@ -39,36 +40,45 @@ class Snake():
     #sets the snake control logic
     def control(self,input):
 
-        dir = ["up","down","right","left"]
-
-    #determine whats being pressed in hte the main part
-    if snakeLength >1:
-        if input == 273:
-            print("pressed up")
-            if self.current_dire != (dir[0] and dir[1]):
-                self.current_dire ="up"
-                self.snakeY-=10
-        elif input == 274:
-            print("pressed down")
-            if self.current_dire != (dir[0] and dir[1]):
-                self.current_dire ="down"
-                self.snakeY+=10
-        elif input == 275:
-            print("pressed right")
-            if self.current_dire != (dir[2] and dir[3]):
-                self.current_dire ="right"
-                self.snakeX+=10
-        elif input == 276:
-            print("pressed left")
-            if self.current_dire != (dir[2] and dir[3]):
-                self.current_dire ="left"
-                self.snakeX-=10
-        else:
+        if input not in dir:
             pass
+        elif self.snakeLength >1:
+            self.movement(self.dir[input])
+        else :#goes wheere ever wanted
+            if  self.current_dire == "UP":
+                self.snakeY -= 10
+            if  self.current_dire == "DOWN":
+                self.snakeY += 10
+            if  self.current_dire == "RIGHT":
+                self.snakeX += 10
+            if  self.current_dire == "LEFT":
+                self.snakeX -= 10
+            else:
 
-    else:
-        print("length is still one ")
 
+   ### def continue_movement(self):
+ ###       dir[self.current_dire]
+###
+    ###   ### 1  notthing pressed , not going
+ ###   2  pressed goes one direction and all direction with only head
+   ###  3 pressed goes one direction and 2 direicont only
+    ### 4  goes and only goes one direcion if not pressed
+###
+
+    def movement(self,input):
+
+        if input == "UP":
+            if self.current_dire != (dir[0] and dir[1]):
+                self.current_dire = "UP"
+        if input == "DOWN":
+            if self.current_dire != (dir[0] and dir[1]):
+                self.current_dire = "DOWN"
+        if input == "RIGHT":
+            if self.current_dire != (dir[2] and dir[3]):
+                self.current_dire = "RIGHT"
+        if input == "LEFT:
+            if self.current_dire != (dir[2] and dir[3]):
+                self.current_dire = "LEFT"
 
     def display(self):
         self.window.fill((255, 255, 255))
@@ -91,8 +101,10 @@ class Snake():
                 if event.type == pygame.KEYDOWN:
                     key = event.key
                     self.control(key)
+                elif not kbhit():
+                    self.control(self.current_dire)
 
-
+                print("something")
             pygame.display.update()
             self.clock.tick(60)
 
@@ -109,6 +121,5 @@ if __name__ == "__main__":
 
     game = Snake()
     game.play()
-    game.quitgame()
 
 
