@@ -15,7 +15,8 @@ class Snake():
     def __init__(self, snakeX,snakeY):
 
         pygame.init()
-        gameDisplay = pygame.display.set_mode((800, 600))
+        window = pygame.display.set_mode((800, 600))
+        tittle = pygame.display.set_caption("Snakey")
 
     def update():
         pygame.display.update()
@@ -42,4 +43,30 @@ class Snake():
 
 
 if __name__ == "__main__":
-    pass
+    ###  firstSnakeGame = Snake(2,3)
+    gameDisplay = pygame.display.set_mode((800,600))
+
+    clock = pygame.time.Clock()
+    crashed = False
+    while not crashed:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                crashed = True
+
+            print(event)
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+
+    pygame.quit()
+    quit()
+
+
+###simple snake game
+###then after finsih would like to
+###add some difficulity like flip image or something of some
+###sort of blocks that limites the player
+###...
