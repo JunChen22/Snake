@@ -6,11 +6,9 @@ import sys
 from pygame.locals import *
 import time
 
-# use map to represent x and y coordinate is not bad. i like it
-
-
 WIDTH = 800
 HEIGHT = 600
+CELL = 10
 
 UP = 'UP'
 DOWN = 'DOWN'
@@ -25,24 +23,14 @@ cSec = 0
 cFrame = 0
 FPS = 0
 
-snakeSpeed = 60
+snakeSpeed = 17
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 tittle = pygame.display.set_caption('Snakey')
 
-
 def main():
     # while True:
     play()
-
-
-def error_message():
-    pass
-
-
-def show_fps():
-    pass
-
 
 def count_fps():
     global cSec, cFrame, FPS
@@ -62,8 +50,8 @@ def update():
 # spawn a food for the snake
 # initial food cant spawn in snake first location
 def newfood(snakeX, snakeY):
-    foodX = randint(1, WIDTH)
-    foodY = randint(1, HEIGHT)
+    foodX = randint(1, WIDTH)*CELL
+    foodY = randint(1, HEIGHT)*CELL
 
     while foodX is snakeX and foodY is snakY:
         foodX = randint(1, WIDTH)
@@ -89,14 +77,18 @@ def control(dire, snakeLength, input):
 
 # snake body
 def displaysnake(snakeCoord):
-    snake = pygame.Rect(snakeCoord['X'], snakeCoord['Y'], 10, 10)
-    pygame.draw.rect(window, WHITE, snake)
+    for length in snakeCoord:
+        snake = pygame.Rect(length['X'], length['Y'], CELL, CELL)
+        pygame.draw.rect(window, WHITE, snake)
 
 
 def displayfood(foodCoord):
-    food = pygame.Rect(foodCoord['X'], foodCoord['Y'], 10, 10)
+    food = pygame.Rect(foodCoord['X'], foodCoord['Y'], CELL, CELL)
     pygame.draw.rect(window, YELLOW, food)
 
+
+def atefood(snakeCoord, foodCoord):
+    pass
 
 # the loop of main control
 def play():
@@ -106,13 +98,14 @@ def play():
     snakeX = randint(1, WIDTH - 1)
     snakeY = randint(1, HEIGHT - 1)
 
-    snakeCoord = {'X': snakeX, 'Y': snakeY}
+    snakeCoord = [{'X': snakeX, 'Y': snakeY}]
+
     foodCoord = newfood(snakeX, snakeY)
-    print(foodCoord)
     fps_font = pygame.font.Font('freesansbold.ttf', 18)
 
-    current_dire = 'none'
+    current_dire = 'NONE'
     snakeLength = 1
+    snakeHead = 0
 
     while True:
         window.fill(BLACK)
@@ -129,22 +122,33 @@ def play():
         fps_overlay = fps_font.render(str(FPS), True, YELLOW)
         window.blit(fps_overlay, (0, 0))
 
-        snakeCoord = {'X': snakeX, 'Y': snakeY}
+
+        if current_dire == 'UP':
+            snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'],
+                                          'Y': snakeCoord[snakeHead]['Y'] - 10})
+        if current_dire == 'DOWN':
+            snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'],
+                                          'Y': snakeCoord[snakeHead]['Y'] + 10})
+        if current_dire == 'RIGHT':
+            snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'] + 10,
+                                          'Y': snakeCoord[snakeHead]['Y']})
+        if current_dire == 'LEFT':
+            snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'] - 10,
+                                          'Y': snakeCoord[snakeHead]['Y']})
+
+        if current_dire != 'NONE': snakeCoord.pop()
+
+        # atefood(snakeCoord,foodCoord)
         displaysnake(snakeCoord)
         displayfood(foodCoord)
 
-        if current_dire == 'UP': snakeY -= 10
-        if current_dire == 'DOWN': snakeY += 10
-        if current_dire == 'RIGHT': snakeX += 10
-        if current_dire == 'LEFT': snakeX -= 10
+
         pygame.display.update()
         clock.tick(snakeSpeed)
-
 
 def quitgame():
     pygame.quit()
     sys.exit()
-
 
 if __name__ == '__main__':
     main()
