@@ -8,7 +8,7 @@ import time
 
 WIDTH = 800
 HEIGHT = 600
-CELL = 10
+CELL = 20
 
 UP = 'UP'
 DOWN = 'DOWN'
@@ -23,14 +23,13 @@ cSec = 0
 cFrame = 0
 FPS = 0
 
-snakeSpeed = 17
-
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 tittle = pygame.display.set_caption('Snakey')
 
 def main():
     # while True:
     play()
+
 
 def count_fps():
     global cSec, cFrame, FPS
@@ -49,14 +48,15 @@ def update():
 
 # spawn a food for the snake
 # initial food cant spawn in snake first location
-def newfood(snakeX, snakeY):
-    foodX = randint(1, WIDTH)*CELL
-    foodY = randint(1, HEIGHT)*CELL
+def newfood(snakeCoord):
+    foodX = randint(1, WIDTH)
+    foodY = randint(1, HEIGHT)
 
-    while foodX is snakeX and foodY is snakY:
+    while foodX != snakeCoord[0]['X'] and foodY != snakeCoord[0]['Y'] or foodX % 10 != 0 or foodY % 10 != 0:
         foodX = randint(1, WIDTH)
         foodY = randint(1, HEIGHT)
 
+    print({'X': foodX, 'Y': foodY})
     return {'X': foodX, 'Y': foodY}
 
 
@@ -90,6 +90,7 @@ def displayfood(foodCoord):
 def atefood(snakeCoord, foodCoord):
     pass
 
+
 # the loop of main control
 def play():
     pygame.init()
@@ -98,15 +99,20 @@ def play():
     snakeX = randint(1, WIDTH - 1)
     snakeY = randint(1, HEIGHT - 1)
 
+    while snakeX % 10 != 0 or snakeY % 10 != 0:
+        snakeX = randint(1, WIDTH - 1)
+        snakeY = randint(1, HEIGHT - 1)
+
     snakeCoord = [{'X': snakeX, 'Y': snakeY}]
 
-    foodCoord = newfood(snakeX, snakeY)
+    foodCoord = newfood(snakeCoord)
     fps_font = pygame.font.Font('freesansbold.ttf', 18)
 
     current_dire = 'NONE'
     snakeLength = 1
     snakeHead = 0
-
+    tailes = 0
+    snakeSpeed = 17
     while True:
         window.fill(BLACK)
 
@@ -122,7 +128,6 @@ def play():
         fps_overlay = fps_font.render(str(FPS), True, YELLOW)
         window.blit(fps_overlay, (0, 0))
 
-
         if current_dire == 'UP':
             snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'],
                                           'Y': snakeCoord[snakeHead]['Y'] - 10})
@@ -136,19 +141,28 @@ def play():
             snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'] - 10,
                                           'Y': snakeCoord[snakeHead]['Y']})
 
-        if current_dire != 'NONE': snakeCoord.pop()
+        if current_dire != 'NONE':
+            if snakeCoord[snakeHead]['X'] == foodCoord['X'] and snakeCoord[snakeHead]['Y'] == foodCoord['Y']:
+                    snakeLength += 2
+                    tailes+=1
+                    foodCoord = newfood(snakeCoord)
+                    snakeSpeed+=2
+            elif tailes>0:
+                tailes-=1
+            else :
+                snakeCoord.pop()
 
-        # atefood(snakeCoord,foodCoord)
         displaysnake(snakeCoord)
         displayfood(foodCoord)
-
 
         pygame.display.update()
         clock.tick(snakeSpeed)
 
+
 def quitgame():
     pygame.quit()
     sys.exit()
+
 
 if __name__ == '__main__':
     main()
