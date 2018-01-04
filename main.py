@@ -19,31 +19,25 @@ YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-cSec = 0
-cFrame = 0
-FPS = 0
-
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 tittle = pygame.display.set_caption('Snakey')
-
-def main():
-    # while True:
-    play()
+snakeHead = 0
 
 
-def count_fps():
-    global cSec, cFrame, FPS
-
-    if cSec == time.strftime("%S"):
-        cFrame += 1
-    else:
-        FPS = cFrame
-        cFrame = 0
-        cSec = time.strftime("%S")
+def wall(snakeCoord):
+    if snakeCoord[snakeHead]['X'] == WIDTH or snakeCoord[snakeHead][
+        'Y'] == HEIGHT or \
+            snakeCoord[snakeHead]['X'] == 0 or snakeCoord[snakeHead]['Y'] == 0:
+        quitgame()
 
 
-def update():
-    pygame.display.update()
+def body(snakeCoord):
+    if (len(snakeCoord) > 1):
+        for snakeBody in snakeCoord[1:]:
+            print(snakeBody)
+            print({snakeCoord[snakeHead]['X'], snakeCoord[snakeHead]['Y']})
+            if snakeCoord[snakeHead] == snakeBody:
+                quitgame()
 
 
 # spawn a food for the snake
@@ -52,11 +46,11 @@ def newfood(snakeCoord):
     foodX = randint(1, WIDTH)
     foodY = randint(1, HEIGHT)
 
-    while foodX != snakeCoord[0]['X'] and foodY != snakeCoord[0]['Y'] or foodX % 10 != 0 or foodY % 10 != 0:
+    while foodX != snakeCoord[0]['X'] and foodY != snakeCoord[0][
+        'Y'] or foodX % 10 != 0 or foodY % 10 != 0:
         foodX = randint(1, WIDTH)
         foodY = randint(1, HEIGHT)
 
-    print({'X': foodX, 'Y': foodY})
     return {'X': foodX, 'Y': foodY}
 
 
@@ -87,10 +81,6 @@ def displayfood(foodCoord):
     pygame.draw.rect(window, YELLOW, food)
 
 
-def atefood(snakeCoord, foodCoord):
-    pass
-
-
 # the loop of main control
 def play():
     pygame.init()
@@ -106,11 +96,10 @@ def play():
     snakeCoord = [{'X': snakeX, 'Y': snakeY}]
 
     foodCoord = newfood(snakeCoord)
-    fps_font = pygame.font.Font('freesansbold.ttf', 18)
 
     current_dire = 'NONE'
     snakeLength = 1
-    snakeHead = 0
+
     tailes = 0
     snakeSpeed = 17
     while True:
@@ -122,11 +111,6 @@ def play():
                 quitgame()
             elif event.type == KEYDOWN:
                 current_dire = control(current_dire, snakeLength, event.key)
-
-        # to show fps/game speed
-        count_fps()
-        fps_overlay = fps_font.render(str(FPS), True, YELLOW)
-        window.blit(fps_overlay, (0, 0))
 
         if current_dire == 'UP':
             snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'],
@@ -141,16 +125,28 @@ def play():
             snakeCoord.insert(snakeHead, {'X': snakeCoord[snakeHead]['X'] - 10,
                                           'Y': snakeCoord[snakeHead]['Y']})
 
+        # NONE means no direction/keypressed doesnt start
+        # if snake ate food , tail doesnt get pop
+        # so it will "increase"
         if current_dire != 'NONE':
-            if snakeCoord[snakeHead]['X'] == foodCoord['X'] and snakeCoord[snakeHead]['Y'] == foodCoord['Y']:
-                    snakeLength += 2
-                    tailes+=1
-                    foodCoord = newfood(snakeCoord)
-                    snakeSpeed+=2
-            elif tailes>0:
-                tailes-=1
-            else :
+
+            # create newfood and tails but doenst actually do anything
+            if snakeCoord[snakeHead]['X'] == foodCoord['X'] and \
+                    snakeCoord[snakeHead]['Y'] == foodCoord['Y']:
+                snakeLength += 20
+                tailes += 10
+                foodCoord = newfood(snakeCoord)
+                snakeSpeed += 2
+            # doesnt actually do anything but to avoid being being popped
+            #  making the tail grows
+            elif tailes > 0:
+                tailes -= 1
+            else:
                 snakeCoord.pop()
+
+        print(len(snakeCoord))
+        body(snakeCoord)
+        wall(snakeCoord)
 
         displaysnake(snakeCoord)
         displayfood(foodCoord)
@@ -165,4 +161,4 @@ def quitgame():
 
 
 if __name__ == '__main__':
-    main()
+    play()
