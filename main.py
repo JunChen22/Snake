@@ -34,8 +34,6 @@ def wall(snakeCoord):
 def body(snakeCoord):
     if (len(snakeCoord) > 1):
         for snakeBody in snakeCoord[1:]:
-            print(snakeBody)
-            print({snakeCoord[snakeHead]['X'], snakeCoord[snakeHead]['Y']})
             if snakeCoord[snakeHead] == snakeBody:
                 quitgame()
 
@@ -133,8 +131,8 @@ def play():
             # create newfood and tails but doenst actually do anything
             if snakeCoord[snakeHead]['X'] == foodCoord['X'] and \
                     snakeCoord[snakeHead]['Y'] == foodCoord['Y']:
-                snakeLength += 20
-                tailes += 10
+                snakeLength += 2
+                tailes += 1
                 foodCoord = newfood(snakeCoord)
                 snakeSpeed += 2
             # doesnt actually do anything but to avoid being being popped
@@ -144,7 +142,6 @@ def play():
             else:
                 snakeCoord.pop()
 
-        print(len(snakeCoord))
         body(snakeCoord)
         wall(snakeCoord)
 
