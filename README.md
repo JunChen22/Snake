@@ -1,3 +1,2 @@
 # Snake
-Trying to write a simple snake game. 
-asdasd
+Simple snake game using python and pygame. 
